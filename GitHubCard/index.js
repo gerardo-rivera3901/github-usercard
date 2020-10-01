@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
@@ -27,8 +29,13 @@
     Using that array, iterate over it, requesting data for each user, creating a new card for each
     user, and adding that card to the DOM.
 */
-
-const followersArray = [];
+const followersArray = [
+  'tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'
+];
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +56,56 @@ const followersArray = [];
       </div>
     </div>
 */
+const newCard = (object => {
+  const card = document.createElement('div')
+  const img = document.createElement('img')
+  const cardInfo = document.createElement('div')
+  const name = document.createElement('h3')
+  const username = document.createElement('p')
+  const location = document.createElement('p')
+  const profile = document.createElement('p')
+  const profileAnchor = document.createElement('a')
+  const followers = document.createElement('p')
+  const following = document.createElement('p')
+  const bio = document.createElement('p')
+
+  card.classList.add('card')
+  cardInfo.classList.add('card-info')
+  name.classList.add('name')
+  username.classList.add('username')
+
+  img.setAttribute('src', object['avatar_url'])
+  name.textContent = (object['name'])
+  username.textContent = (object['login'])
+  location.textContent = `Location: ${object['location']}`
+  profile.textContent = 'Profile: '
+  profileAnchor.setAttribute('href', object['html_url'])
+  profileAnchor.textContent = (object['html_url'])
+  followers.textContent = `Followers: ${object['followers']}`
+  following.textContent = `Following: ${object['following']}`
+  bio.textContent = `Bio: ${object['bio']}`
+
+  card.appendChild(img)
+  card.appendChild(cardInfo)
+  cardInfo.appendChild(name)
+  cardInfo.appendChild(username)
+  cardInfo.appendChild(location)
+  cardInfo.appendChild(profile)
+  profile.appendChild(profileAnchor)
+  cardInfo.appendChild(followers)
+  cardInfo.appendChild(following)
+  cardInfo.appendChild(bio)
+
+  return card
+})
+// console.log(newCard())
+const cardsDiv = document.querySelector('.cards')
+axios.get('https://api.github.com/users/gerardo-rivera3901')
+  .then(res => {
+    const content = res.data
+    cardsDiv.appendChild(newCard(content))
+  })
+
 
 /*
   List of LS Instructors Github username's:
@@ -58,3 +115,11 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+followersArray.forEach(card => {
+  axios.get('https://api.github.com/users/' + card)
+    .then(res => {
+      const content = res.data
+      cardsDiv.appendChild(newCard(content))
+    })
+})
